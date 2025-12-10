@@ -116,7 +116,6 @@ usage() {
 
 	show_option "-gskit-bin"         "the GSKit binary URL"
 	show_option "-gskit-sdk-bin"     "the GSKIT SDK binary URL"
-	show_option "-gskit-credential"  "the credential for downloading the GSKit and GSKit SDK"
 	show_option "--openssl-repo"     "equivalent to -openssl-repo"
 	show_option "--openssl-version"  "specify the version of OpenSSL source to download"
 	show_option "-parallel"          "(ignored)"
@@ -175,9 +174,6 @@ process_options() {
 					;;
 				-gskit-sdk-bin=*)
 					gskit_sdk_bin="${arg#*=}"
-					;;
-				-gskit-credential=*)
-					gskit_credential="${arg#*=}"
 					;;
 				-h | --help)
 					usage
@@ -260,13 +256,8 @@ maybe_get_gskit() {
 		cd OpenJCEPlus
 		mkdir -p ock/jgsk_sdk/lib64
 
-		if [ -n "$gskit_credential" ] ; then
-			curl -u "$gskit_credential" "$gskit_bin"     > ock/jgsk_crypto.tar
-			curl -u "$gskit_credential" "$gskit_sdk_bin" > ock/jgsk_crypto_sdk.tar
-		else
-			echo "GSKit binaries are needed for compiling OpenJCEPlus."
-			fail "Please specify the -gskit-credential option."
-		fi
+		curl -L "$gskit_bin"     > ock/jgsk_crypto.tar
+		curl -L "$gskit_sdk_bin" > ock/jgsk_crypto_sdk.tar
 
 		tar -xf ock/jgsk_crypto_sdk.tar -C ock
 		tar -xf ock/jgsk_crypto.tar     -C ock/jgsk_sdk/lib64
